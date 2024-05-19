@@ -1,0 +1,280 @@
+﻿<Window
+    x:Class="CinemaClient.CinemaPlayingWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:con="clr-namespace:CinemaClient.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:CinemaClient"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Window"
+    Title="CinemaPlayingWindow"
+    MinWidth="1200"
+    MinHeight="660"
+    Background="Black"
+    Initialized="Window_Initialized"
+    WindowState="Maximized"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <con:TimeStampToStringConverter x:Key="TimeStampToStringConverter" />
+        <con:StringResourceConverter x:Key="StringResourceConverter" />
+        <con:StringToBitmapConverter x:Key="StringToBitmapConverter" />
+
+        <Style x:Key="textWhite" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+
+        <Style x:Key="RectangleWithTextStyle" TargetType="Rectangle">
+            <Setter Property="ItemsControl.Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Control">
+                        <Grid>
+                            <Rectangle Fill="{Binding}" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{Binding Name}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+    <Grid x:Name="content">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel x:Name="cinemaVIew" Grid.Column="0">
+
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <!--  screen  -->
+                <Grid Grid.Row="0">
+
+                    <Rectangle
+                        x:Name="screen"
+                        Width=" 460"
+                        Height="140"
+                        Margin="40,20,0,10"
+                        Fill="#404040"
+                        RadiusX="20"
+                        RadiusY="20">
+                        <Rectangle.RenderTransform>
+                            <SkewTransform AngleX="-5" AngleY="0" CenterX="25" CenterY="25" />
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                    <Rectangle
+                        x:Name="screen2"
+                        Width=" 460"
+                        Height="140"
+                        Margin="-40,20,0,10"
+                        Fill="#404040"
+                        RadiusX="20"
+                        RadiusY="20">
+                        <Rectangle.RenderTransform>
+                            <SkewTransform AngleX="5" AngleY="0" CenterX="25" CenterY="25" />
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+
+                </Grid>
+
+                <TextBlock
+                    Grid.Row="0"
+                    MaxWidth="400"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="Calibri"
+                    FontSize="34"
+                    FontWeight="Bold"
+                    Foreground="Cyan"
+                    Text="Wybierz miejsca, a następnie kliknij OK"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding ElementName=Window, Path=DataContext.ScreenInfoDisplay}" />
+
+                <Separator Grid.Row="1" Width="600" />
+
+                <Grid
+                    x:Name="PlacesRow"
+                    Grid.Row="2"
+                    MaxWidth="1000" />
+
+            </Grid>
+        </StackPanel>
+
+
+        <StackPanel
+            Grid.Column="1"
+            MinWidth="300"
+            MinHeight="300">
+
+            <ScrollViewer Height="{Binding ElementName=content, Path=ActualHeight}" VerticalScrollBarVisibility="Hidden">
+
+                <DockPanel LastChildFill="True">
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel
+                            Grid.Row="0"
+                            Margin="0,20"
+                            Background="Gray">
+
+                            <Image
+                                x:Name="movieImg"
+                                MaxHeight="350"
+                                Source="{Binding Playing.Movie.Image, Converter={StaticResource StringToBitmapConverter}}" />
+
+                        </StackPanel>
+
+                        <Grid Grid.Row="1" Margin="20,0">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+
+                                <TextBlock
+                                    FontFamily="Calibri Italic"
+                                    Style="{StaticResource textWhite}"
+                                    Text="Nazwa filmu:" />
+                                <TextBlock
+                                    Margin="20,10"
+                                    FontFamily="Calibri"
+                                    FontSize="18"
+                                    FontWeight="DemiBold"
+                                    Style="{StaticResource textWhite}"
+                                    Text="{Binding ElementName=Window, Path=DataContext.Playing.Movie.Name}"
+                                    TextWrapping="Wrap" />
+
+                                <TextBlock
+                                    FontFamily="Calibri Italic"
+                                    Style="{StaticResource textWhite}"
+                                    Text="Gatunek:" />
+                                <TextBlock
+                                    Margin="20,10"
+                                    FontFamily="Calibri"
+                                    FontSize="18"
+                                    FontWeight="DemiBold"
+                                    Style="{StaticResource textWhite}"
+                                    Text="{Binding ElementName=Window, Path=DataContext.Playing.Movie.Genre}"
+                                    TextWrapping="Wrap" />
+
+                                <TextBlock
+                                    FontFamily="Calibri Italic"
+                                    Style="{StaticResource textWhite}"
+                                    Text="Reżyser:" />
+                                <TextBlock
+                                    Margin="20,10"
+                                    FontFamily="Calibri"
+                                    FontSize="18"
+                                    FontWeight="DemiBold"
+                                    Style="{StaticResource textWhite}"
+                                    Text="{Binding ElementName=Window, Path=DataContext.Playing.Movie.Director}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1">
+
+                                <TextBlock
+                                    HorizontalAlignment="Right"
+                                    FontFamily="Calibri Italic"
+                                    Style="{StaticResource textWhite}"
+                                    Text="Czas trwania:" />
+                                <TextBlock
+                                    Margin="20,10"
+                                    HorizontalAlignment="Right"
+                                    FontFamily="Calibri"
+                                    FontSize="18"
+                                    FontWeight="DemiBold"
+                                    Style="{StaticResource textWhite}"
+                                    Text="{Binding ElementName=Window, Path=DataContext.Playing.Movie.Duration, Converter={StaticResource TimeStampToStringConverter}}"
+                                    TextWrapping="Wrap" />
+
+                                <TextBlock
+                                    HorizontalAlignment="Right"
+                                    FontFamily="Calibri Italic"
+                                    Style="{StaticResource textWhite}"
+                                    Text="Rok produkcji:" />
+                                <TextBlock
+                                    Margin="20,10"
+                                    HorizontalAlignment="Right"
+                                    FontFamily="Calibri"
+                                    FontSize="18"
+                                    FontWeight="DemiBold"
+                                    Style="{StaticResource textWhite}"
+                                    Text="{Binding ElementName=Window, Path=DataContext.Playing.Movie.ProductionYear}"
+                                    TextWrapping="Wrap" />
+
+                                <TextBlock
+                                    HorizontalAlignment="Right"
+                                    FontFamily="Calibri Italic"
+                                    Style="{StaticResource textWhite}"
+                                    Text="Ocena:" />
+                                <TextBlock
+                                    Margin="20,10"
+                                    HorizontalAlignment="Right"
+                                    FontFamily="Calibri"
+                                    FontSize="18"
+                                    FontWeight="DemiBold"
+                                    Style="{StaticResource textWhite}"
+                                    Text=""
+                                    TextWrapping="Wrap">
+                                    <Run Text="{Binding ElementName=Window, Path=DataContext.Playing.Movie.Grade}" /><Run Text="/10" />
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="2" Margin="20,0">
+
+                            <StackPanel Orientation="Vertical">
+
+                                <TextBlock
+                                    FontFamily="Calibri Italic"
+                                    Style="{StaticResource textWhite}"
+                                    Text="Opis:" />
+                                <TextBlock
+                                    Margin="20,10"
+                                    FontFamily="Calibri"
+                                    FontSize="13"
+                                    Style="{StaticResource textWhite}"
+                                    Text="{Binding ElementName=Window, Path=DataContext.Playing.Movie.DescriptionLong, Converter={StaticResource StringResourceConverter}}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+
+                    <StackPanel DockPanel.Dock="Bottom">
+
+                        <Button
+                            x:Name="reservePlaces"
+                            MinHeight="30"
+                            Command="{Binding ElementName=Window, Path=DataContext.ReserveCommand}"
+                            Content="{Binding ElementName=Window, Path=DataContext.ReserveButtonTekst}"
+                            FontFamily="Verdana"
+                            FontWeight="Bold" />
+
+                    </StackPanel>
+
+                    <Separator DockPanel.Dock="Bottom" Visibility="Collapsed" />
+
+                </DockPanel>
+            </ScrollViewer>
+        </StackPanel>
+    </Grid>
+</Window>
