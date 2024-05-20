@@ -68,5 +68,14 @@ namespace CinemaClient.Resources {
                 return ResourceManager.GetString("StringNone", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nazwa użytkownika.
+        /// </summary>
+        internal static string UserName {
+            get {
+                return ResourceManager.GetString("UserName", resourceCulture);
+            }
+        }
     }
 }

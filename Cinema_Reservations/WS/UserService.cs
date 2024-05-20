@@ -13,6 +13,8 @@ namespace Cinema_Reservations.WS
 		void AddUser(string name, string email, string password);
 		[OperationContract]
 		int AuthenticateUser(string email, string password);
+		[OperationContract]
+		public User GetUserData(int userId);
 	}
 
 	public class UserService : IUserService
@@ -60,5 +62,18 @@ namespace Cinema_Reservations.WS
 
 			return user.Id;
 		}
-    }
+
+
+		public User GetUserData(int userId)
+		{
+			var user = context.Users.FirstOrDefault(u => u.Id == userId);
+
+			if (user == null)
+				return null;
+
+			user.Password = string.Empty;
+
+			return user;
+		}
+	}
 }

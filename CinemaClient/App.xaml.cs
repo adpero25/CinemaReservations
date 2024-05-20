@@ -10,8 +10,8 @@ namespace CinemaClient
 	/// </summary>
 	public partial class App : Application
 	{
-
 		public static int UserID { get; private set; }
+		public static User User { get; private set; }
 
 		public static void SetUserId(AuthenticateUserResponse idResponse)
 		{
@@ -22,6 +22,11 @@ namespace CinemaClient
 			}
 
 			throw new Exception("Niepoprawny ID użytkownika");
+		}
+
+		public static void SetUser(User user)
+		{
+			User = user;
 		}
 	}
 

@@ -120,4 +120,7 @@
   <data name="StringNone" xml:space="preserve">
     <value>Brak</value>
   </data>
+  <data name="UserName" xml:space="preserve">
+    <value>Nazwa użytkownika</value>
+  </data>
 </root>

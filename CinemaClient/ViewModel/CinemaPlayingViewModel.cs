@@ -1,13 +1,21 @@
 ﻿using CinemaClient.Model;
 using CinemaServiceRef;
-using System;
-using System.Collections.Generic;
+using System.IO;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.IO.Font.Constants;
+using iText.Kernel.Font;
+using iText.Layout.Properties;
+using iText.Kernel.Colors;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using UserServiceRef;
+using Playing = CinemaServiceRef.Playing;
+using Reservation = CinemaServiceRef.Reservation;
+using iText.IO.Image;
 
 namespace CinemaClient.ViewModel
 {
@@ -20,6 +28,7 @@ namespace CinemaClient.ViewModel
 	public class CinemaPlayingViewModel : PropertyChangeModel
 	{
 		private CinemaServiceClient cinemaService;
+		private UserServiceClient userService;
 
 		private Playing playing;
 		public Playing Playing
@@ -73,6 +82,7 @@ namespace CinemaClient.ViewModel
 		public CinemaPlayingViewModel(Playing _playing)
 		{
 			cinemaService = new CinemaServiceClient();
+			userService = new UserServiceClient();
 			userReservedPlaces = new ObservableCollection<string>();
 			ReserveCommand = new AsyncRelayCommand(ReservePlacesCommandAsync);
 			Playing = _playing;
@@ -93,7 +103,7 @@ namespace CinemaClient.ViewModel
 					throw new Exception("Nie udało się pobrać danych z serwera!");
 				}
 			}
-			catch (Exception ex) 
+			catch (Exception ex)
 			{
 				MessageBox.Show($"Nie udało się pobrać danych seansu: {ex.Message}");
 				throw;
@@ -142,7 +152,56 @@ namespace CinemaClient.ViewModel
 							{
 								await cinemaService.MakeReservationAsync(DateTime.Now, App.UserID, playing.Id, seats);
 
-								MessageBox.Show($"Rezerwacja udana!!!{Environment.NewLine}Życzymy udanego seansu!", "Sukces!", MessageBoxButton.OK, MessageBoxImage.Information);
+								var userDetails = (await userService.GetUserDataAsync(App.UserID)).Body.GetUserDataResult;
+								var fileName = $"rezerwacja_{App.UserID}_{playing.Id}_{playing.Date.ToFileTime()}.pdf";
+
+								// Initialize PDF writer
+								PdfWriter writer = new PdfWriter(fileName);
+
+								// Initialize PDF document
+								PdfDocument pdf = new PdfDocument(writer);
+
+								// Initialize document
+								Document document = new Document(pdf);
+
+								// Create a font
+								PdfFont font = PdfFontFactory.CreateFont(StandardFonts.HELVETICA);
+								PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+
+								// Create a table with 2 columns
+								Table mainTable = new Table(UnitValue.CreatePercentArray(new float[] { 2, 2 })).UseAllAvailableWidth();
+								Table contentTable = new Table(UnitValue.CreatePercentArray(new float[] { 1 })).UseAllAvailableWidth();
+
+								contentTable.AddCell(new Cell().Add(new Paragraph($"Potwierdzenie rezerwacji biletu").SetHorizontalAlignment(iText.Layout.Properties.HorizontalAlignment.CENTER).SetFont(boldFont).SetFontSize(25)));
+								contentTable.AddCell(new Cell().Add(new Paragraph($"{Environment.NewLine}")));
+								contentTable.AddCell(new Cell().Add(new Paragraph($"Dane zamawiającego:").SetFont(boldFont).SetFontSize(20)));
+								contentTable.AddCell(new Cell().Add(new Paragraph($"{userDetails.Name}").SetFont(font).SetItalic()));
+								contentTable.AddCell(new Cell().Add(new Paragraph($"{userDetails.Email}").SetFont(font).SetItalic()));
+								contentTable.AddCell(new Cell().Add(new Paragraph($"{Environment.NewLine}")));
+								contentTable.AddCell(new Cell().Add(new Paragraph().Add(new Text("Seans: ").SetFont(boldFont)).Add(new Text($"{playing.Movie.Name}")).SetFont(font)));
+								contentTable.AddCell(new Cell().Add(new Paragraph().Add(new Text($"Data: ").SetFont(boldFont)).Add(new Text($"{playing.Date}")).SetFont(font)));
+								contentTable.AddCell(new Cell().Add(new Paragraph().Add(new Text($"Sala: ").SetFont(boldFont)).Add(new Text($"{playing.Hall.Number}")).SetFont(font)));
+								contentTable.AddCell(new Cell().Add(new Paragraph().Add(new Text($"Miejsca: ").SetFont(boldFont)).Add(new Text($"{seats}")).SetFont(font)));
+								contentTable.AddCell(new Cell().Add(new Paragraph().Add(new Text($"Do zapłaty: ").SetFont(boldFont)).Add(new Text($"{playing.TicketCost * userReservedPlaces.Count}pln")).SetFont(font)));
+								contentTable.AddCell(new Cell().Add(new Paragraph($"{Environment.NewLine}")));
+								contentTable.AddCell(new Cell().Add(new Paragraph($"Do zobaczenia na miejscu!").SetFont(boldFont)));
+
+								mainTable.AddCell(new Cell().Add(contentTable));
+
+								var img = new Image(ImageDataFactory.Create(Convert.FromBase64String(playing.Movie.Image)));
+								img.SetAutoScale(true);
+
+								mainTable.AddCell(new Cell().Add(img));
+								
+								document.Add(mainTable);
+
+								// Close document
+								document.Close();
+
+								MessageBox.Show($"Rezerwacja udana!!!{Environment.NewLine}" +
+									$"Życzymy udanego seansu!{Environment.NewLine}" +
+									$"Potwierdzenie wygenerowane do pliku: {Environment.NewLine}" +
+									$"{fileName}", "Sukces!", MessageBoxButton.OK, MessageBoxImage.Information);
 
 								CurrentState = State.None;
 							}

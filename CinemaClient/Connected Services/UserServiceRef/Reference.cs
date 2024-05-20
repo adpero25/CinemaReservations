@@ -14,195 +14,6 @@ namespace UserServiceRef
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Reservation", Namespace="http://tempuri.org/")]
-    public partial class Reservation : object, System.ComponentModel.INotifyPropertyChanged
-    {
-        
-        private int IdField;
-        
-        private int UserIdField;
-        
-        private UserServiceRef.User UserField;
-        
-        private int PlayingIdField;
-        
-        private UserServiceRef.Playing PlayingField;
-        
-        private System.DateTime DateField;
-        
-        private float ReservationCostField;
-        
-        private int SeatCountField;
-        
-        private string SeatsField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public int Id
-        {
-            get
-            {
-                return this.IdField;
-            }
-            set
-            {
-                if ((this.IdField.Equals(value) != true))
-                {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public int UserId
-        {
-            get
-            {
-                return this.UserIdField;
-            }
-            set
-            {
-                if ((this.UserIdField.Equals(value) != true))
-                {
-                    this.UserIdField = value;
-                    this.RaisePropertyChanged("UserId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
-        public UserServiceRef.User User
-        {
-            get
-            {
-                return this.UserField;
-            }
-            set
-            {
-                if ((object.ReferenceEquals(this.UserField, value) != true))
-                {
-                    this.UserField = value;
-                    this.RaisePropertyChanged("User");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=3)]
-        public int PlayingId
-        {
-            get
-            {
-                return this.PlayingIdField;
-            }
-            set
-            {
-                if ((this.PlayingIdField.Equals(value) != true))
-                {
-                    this.PlayingIdField = value;
-                    this.RaisePropertyChanged("PlayingId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=4)]
-        public UserServiceRef.Playing Playing
-        {
-            get
-            {
-                return this.PlayingField;
-            }
-            set
-            {
-                if ((object.ReferenceEquals(this.PlayingField, value) != true))
-                {
-                    this.PlayingField = value;
-                    this.RaisePropertyChanged("Playing");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=5)]
-        public System.DateTime Date
-        {
-            get
-            {
-                return this.DateField;
-            }
-            set
-            {
-                if ((this.DateField.Equals(value) != true))
-                {
-                    this.DateField = value;
-                    this.RaisePropertyChanged("Date");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=6)]
-        public float ReservationCost
-        {
-            get
-            {
-                return this.ReservationCostField;
-            }
-            set
-            {
-                if ((this.ReservationCostField.Equals(value) != true))
-                {
-                    this.ReservationCostField = value;
-                    this.RaisePropertyChanged("ReservationCost");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=7)]
-        public int SeatCount
-        {
-            get
-            {
-                return this.SeatCountField;
-            }
-            set
-            {
-                if ((this.SeatCountField.Equals(value) != true))
-                {
-                    this.SeatCountField = value;
-                    this.RaisePropertyChanged("SeatCount");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=8)]
-        public string Seats
-        {
-            get
-            {
-                return this.SeatsField;
-            }
-            set
-            {
-                if ((object.ReferenceEquals(this.SeatsField, value) != true))
-                {
-                    this.SeatsField = value;
-                    this.RaisePropertyChanged("Seats");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName)
-        {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null))
-            {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.Runtime.Serialization.DataContractAttribute(Name="User", Namespace="http://tempuri.org/")]
     public partial class User : object, System.ComponentModel.INotifyPropertyChanged
     {
@@ -295,432 +106,6 @@ namespace UserServiceRef
         }
     }
     
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Playing", Namespace="http://tempuri.org/")]
-    public partial class Playing : object, System.ComponentModel.INotifyPropertyChanged
-    {
-        
-        private int IdField;
-        
-        private int HallIdField;
-        
-        private UserServiceRef.CinemaHall HallField;
-        
-        private int MovieIdField;
-        
-        private UserServiceRef.Movie MovieField;
-        
-        private System.DateTime DateField;
-        
-        private UserServiceRef.PlayingState StateField;
-        
-        private float TicketCostField;
-        
-        private UserServiceRef.Reservation[] ReservationsField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public int Id
-        {
-            get
-            {
-                return this.IdField;
-            }
-            set
-            {
-                if ((this.IdField.Equals(value) != true))
-                {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=1)]
-        public int HallId
-        {
-            get
-            {
-                return this.HallIdField;
-            }
-            set
-            {
-                if ((this.HallIdField.Equals(value) != true))
-                {
-                    this.HallIdField = value;
-                    this.RaisePropertyChanged("HallId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
-        public UserServiceRef.CinemaHall Hall
-        {
-            get
-            {
-                return this.HallField;
-            }
-            set
-            {
-                if ((object.ReferenceEquals(this.HallField, value) != true))
-                {
-                    this.HallField = value;
-                    this.RaisePropertyChanged("Hall");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=3)]
-        public int MovieId
-        {
-            get
-            {
-                return this.MovieIdField;
-            }
-            set
-            {
-                if ((this.MovieIdField.Equals(value) != true))
-                {
-                    this.MovieIdField = value;
-                    this.RaisePropertyChanged("MovieId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=4)]
-        public UserServiceRef.Movie Movie
-        {
-            get
-            {
-                return this.MovieField;
-            }
-            set
-            {
-                if ((object.ReferenceEquals(this.MovieField, value) != true))
-                {
-                    this.MovieField = value;
-                    this.RaisePropertyChanged("Movie");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=5)]
-        public System.DateTime Date
-        {
-            get
-            {
-                return this.DateField;
-            }
-            set
-            {
-                if ((this.DateField.Equals(value) != true))
-                {
-                    this.DateField = value;
-                    this.RaisePropertyChanged("Date");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=6)]
-        public UserServiceRef.PlayingState State
-        {
-            get
-            {
-                return this.StateField;
-            }
-            set
-            {
-                if ((this.StateField.Equals(value) != true))
-                {
-                    this.StateField = value;
-                    this.RaisePropertyChanged("State");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=7)]
-        public float TicketCost
-        {
-            get
-            {
-                return this.TicketCostField;
-            }
-            set
-            {
-                if ((this.TicketCostField.Equals(value) != true))
-                {
-                    this.TicketCostField = value;
-                    this.RaisePropertyChanged("TicketCost");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-        public UserServiceRef.Reservation[] Reservations
-        {
-            get
-            {
-                return this.ReservationsField;
-            }
-            set
-            {
-                if ((object.ReferenceEquals(this.ReservationsField, value) != true))
-                {
-                    this.ReservationsField = value;
-                    this.RaisePropertyChanged("Reservations");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName)
-        {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null))
-            {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="CinemaHall", Namespace="http://tempuri.org/")]
-    public partial class CinemaHall : object, System.ComponentModel.INotifyPropertyChanged
-    {
-        
-        private int IdField;
-        
-        private int NumberField;
-        
-        private UserServiceRef.HallType TypeField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public int Id
-        {
-            get
-            {
-                return this.IdField;
-            }
-            set
-            {
-                if ((this.IdField.Equals(value) != true))
-                {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public int Number
-        {
-            get
-            {
-                return this.NumberField;
-            }
-            set
-            {
-                if ((this.NumberField.Equals(value) != true))
-                {
-                    this.NumberField = value;
-                    this.RaisePropertyChanged("Number");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public UserServiceRef.HallType Type
-        {
-            get
-            {
-                return this.TypeField;
-            }
-            set
-            {
-                if ((this.TypeField.Equals(value) != true))
-                {
-                    this.TypeField = value;
-                    this.RaisePropertyChanged("Type");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName)
-        {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null))
-            {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Movie", Namespace="http://tempuri.org/")]
-    public partial class Movie : object, System.ComponentModel.INotifyPropertyChanged
-    {
-        
-        private int IdField;
-        
-        private string NameField;
-        
-        private string ProducerField;
-        
-        private int ProductionYearField;
-        
-        private string DescriptionField;
-        
-        private string ImagePathField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public int Id
-        {
-            get
-            {
-                return this.IdField;
-            }
-            set
-            {
-                if ((this.IdField.Equals(value) != true))
-                {
-                    this.IdField = value;
-                    this.RaisePropertyChanged("Id");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public string Name
-        {
-            get
-            {
-                return this.NameField;
-            }
-            set
-            {
-                if ((object.ReferenceEquals(this.NameField, value) != true))
-                {
-                    this.NameField = value;
-                    this.RaisePropertyChanged("Name");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false)]
-        public string Producer
-        {
-            get
-            {
-                return this.ProducerField;
-            }
-            set
-            {
-                if ((object.ReferenceEquals(this.ProducerField, value) != true))
-                {
-                    this.ProducerField = value;
-                    this.RaisePropertyChanged("Producer");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public int ProductionYear
-        {
-            get
-            {
-                return this.ProductionYearField;
-            }
-            set
-            {
-                if ((this.ProductionYearField.Equals(value) != true))
-                {
-                    this.ProductionYearField = value;
-                    this.RaisePropertyChanged("ProductionYear");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=4)]
-        public string Description
-        {
-            get
-            {
-                return this.DescriptionField;
-            }
-            set
-            {
-                if ((object.ReferenceEquals(this.DescriptionField, value) != true))
-                {
-                    this.DescriptionField = value;
-                    this.RaisePropertyChanged("Description");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=5)]
-        public string ImagePath
-        {
-            get
-            {
-                return this.ImagePathField;
-            }
-            set
-            {
-                if ((object.ReferenceEquals(this.ImagePathField, value) != true))
-                {
-                    this.ImagePathField = value;
-                    this.RaisePropertyChanged("ImagePath");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName)
-        {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null))
-            {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="PlayingState", Namespace="http://tempuri.org/")]
-    public enum PlayingState : int
-    {
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        ComingSoon = 0,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Playing = 1,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Ended = 2,
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="HallType", Namespace="http://tempuri.org/")]
-    public enum HallType : int
-    {
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Small = 0,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Medium = 1,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Large = 2,
-    }
-    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="UserServiceRef.IUserService")]
     public interface IUserService
@@ -732,8 +117,8 @@ namespace UserServiceRef
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUserService/AuthenticateUser", ReplyAction="*")]
         System.Threading.Tasks.Task<UserServiceRef.AuthenticateUserResponse> AuthenticateUserAsync(UserServiceRef.AuthenticateUserRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUserService/GetUserReservation", ReplyAction="*")]
-        System.Threading.Tasks.Task<UserServiceRef.Reservation[]> GetUserReservationAsync(int userId);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IUserService/GetUserData", ReplyAction="*")]
+        System.Threading.Tasks.Task<UserServiceRef.GetUserDataResponse> GetUserDataAsync(UserServiceRef.GetUserDataRequest request);
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -900,6 +285,86 @@ namespace UserServiceRef
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class GetUserDataRequest
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetUserData", Namespace="http://tempuri.org/", Order=0)]
+        public UserServiceRef.GetUserDataRequestBody Body;
+        
+        public GetUserDataRequest()
+        {
+        }
+        
+        public GetUserDataRequest(UserServiceRef.GetUserDataRequestBody Body)
+        {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class GetUserDataRequestBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=0)]
+        public int userId;
+        
+        public GetUserDataRequestBody()
+        {
+        }
+        
+        public GetUserDataRequestBody(int userId)
+        {
+            this.userId = userId;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class GetUserDataResponse
+    {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetUserDataResponse", Namespace="http://tempuri.org/", Order=0)]
+        public UserServiceRef.GetUserDataResponseBody Body;
+        
+        public GetUserDataResponse()
+        {
+        }
+        
+        public GetUserDataResponse(UserServiceRef.GetUserDataResponseBody Body)
+        {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class GetUserDataResponseBody
+    {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public UserServiceRef.User GetUserDataResult;
+        
+        public GetUserDataResponseBody()
+        {
+        }
+        
+        public GetUserDataResponseBody(UserServiceRef.User GetUserDataResult)
+        {
+            this.GetUserDataResult = GetUserDataResult;
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.2.0-preview1.23462.5")]
     public interface IUserServiceChannel : UserServiceRef.IUserService, System.ServiceModel.IClientChannel
     {
@@ -981,9 +446,18 @@ namespace UserServiceRef
             return ((UserServiceRef.IUserService)(this)).AuthenticateUserAsync(inValue);
         }
         
-        public System.Threading.Tasks.Task<UserServiceRef.Reservation[]> GetUserReservationAsync(int userId)
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<UserServiceRef.GetUserDataResponse> UserServiceRef.IUserService.GetUserDataAsync(UserServiceRef.GetUserDataRequest request)
         {
-            return base.Channel.GetUserReservationAsync(userId);
+            return base.Channel.GetUserDataAsync(request);
+        }
+        
+        public System.Threading.Tasks.Task<UserServiceRef.GetUserDataResponse> GetUserDataAsync(int userId)
+        {
+            UserServiceRef.GetUserDataRequest inValue = new UserServiceRef.GetUserDataRequest();
+            inValue.Body = new UserServiceRef.GetUserDataRequestBody();
+            inValue.Body.userId = userId;
+            return ((UserServiceRef.IUserService)(this)).GetUserDataAsync(inValue);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()

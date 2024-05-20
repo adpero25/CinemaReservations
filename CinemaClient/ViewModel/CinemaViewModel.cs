@@ -6,12 +6,14 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using UserServiceRef;
 
 namespace CinemaClient.ViewModel
 {
@@ -27,9 +29,10 @@ namespace CinemaClient.ViewModel
 
     class CinemaViewModel : PropertyChangeModel
     {
-
 		private ICinemaService cinemaService;
-        public ObservableCollection<Playing> AvailablePlayings { get; set; }
+		private IUserService userService;
+
+		public ObservableCollection<Playing> AvailablePlayings { get; set; }
 
         private BitmapImage selectedMovieImage;
         public BitmapImage SelectedMovieImage 
@@ -75,12 +78,26 @@ namespace CinemaClient.ViewModel
             }
         }
 
-        public ICommand ShowPlayingCommand {  get; set; }
+        private string userName;
+        public string UserName
+        {
+            get { return userName; }
+            set { userName = value; OnPropertyChange(); }
+        }
 
+		private string userEmail;
+		public string UserEmail
+		{
+			get { return userEmail; }
+			set { userEmail = value; OnPropertyChange(); }
+		}
+        
+		public ICommand ShowPlayingCommand {  get; set; }
 
 		public CinemaViewModel()
         {
             cinemaService = new CinemaServiceClient();
+			userService = new UserServiceClient();
 			AvailablePlayings = new ObservableCollection<Playing>();
             InfoPanelWidth = "0";
 
@@ -129,6 +146,22 @@ namespace CinemaClient.ViewModel
 			}
 
             return bitmapImage;
+		}
+
+		public async void GetUserDetailsAsync()
+		{
+			var userDetails = (await userService.GetUserDataAsync(new GetUserDataRequest()
+            {
+                Body = new GetUserDataRequestBody()
+                {
+                    userId = App.UserID
+				}
+            })).Body.GetUserDataResult;
+
+            App.SetUser(userDetails);
+
+            UserName = userDetails.Name;
+            UserEmail = userDetails.Email;
 		}
 	}
 }
