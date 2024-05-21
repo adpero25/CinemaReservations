@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using CinemaClient.Model;
+using System.Configuration;
 using System.Data;
 using System.Windows;
 using UserServiceRef;
@@ -10,8 +11,26 @@ namespace CinemaClient
 	/// </summary>
 	public partial class App : Application
 	{
-		public static int UserID { get; private set; }
-		public static User User { get; private set; }
+		private static int userID;
+		public static int UserID 
+		{ 
+			get { return userID; } 
+			private set
+			{
+				userID = value;
+				new PropertyChangeModel().OnPropertyChange(nameof(UserID));
+			}
+		}
+		private static User user;
+		public static User User 
+		{ 
+			get { return user; } 
+			private set
+			{
+				user = value;
+				new PropertyChangeModel().OnPropertyChange(nameof(User));
+			}
+		}
 
 		public static void SetUserId(AuthenticateUserResponse idResponse)
 		{

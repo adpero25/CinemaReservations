@@ -251,9 +251,16 @@ namespace Cinema_Reservations.WS
 		public List<Reservation> GetAllUserReservation(int userId)
 		{
 			var reservations = context.Reservations
-				.Include(p => p.Playing)
+				.Include(p => p.Playing).ThenInclude(m => m.Movie)
+				.Include(p => p.Playing).ThenInclude(m => m.Hall)
 				.Where(r => r.UserId == userId)
 				.ToList();
+
+			foreach (var item in reservations)
+			{
+				item.Playing!.Reservations = null;
+				item.Playing.Movie.Image = GetMovieImage(item.Playing.MovieId);
+			}
 
 			return reservations;
 		}

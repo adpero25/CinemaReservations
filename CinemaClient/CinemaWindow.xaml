@@ -15,6 +15,7 @@
     Loaded="Window_Loaded"
     mc:Ignorable="d">
     <Window.Resources>
+        <local:App x:Key="app" />
         <con:TimeStampToStringConverter x:Key="TimeStampToStringConverter" />
         <con:StringResourceConverter x:Key="StringResourceConverter" />
         <con:StringToBitmapConverter x:Key="StringToBitmapConverter" />
@@ -89,61 +90,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <!--<Style x:Key="CustomThumbStyle" TargetType="Thumb">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Thumb">
-                        <Rectangle
-                            Fill="{TemplateBinding Background}"
-                            RadiusX="5"
-                            RadiusY="5"
-                            Stroke="{TemplateBinding BorderBrush}"
-                            StrokeThickness="{TemplateBinding BorderThickness}" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style TargetType="ScrollBar">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Width" Value="18" />
-            <Setter Property="Orientation" Value="Vertical" />
-            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
-            <Setter Property="RenderTransform">
-                <Setter.Value>
-                    <RotateTransform Angle="180" />
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ScrollBar">
-                        <Grid>
-                            <Border x:Name="Track" Background="#333333" />
-                            <Track x:Name="PART_Track">
-                                <Track.Thumb>
-                                    <Thumb
-                                        Width="12"
-                                        Height="auto"
-                                        Margin="3"
-                                        Background="#818181"
-                                        BorderBrush="#818181"
-                                        BorderThickness="15"
-                                        Style="{StaticResource CustomThumbStyle}" />
-                                </Track.Thumb>
-                                <Track.DecreaseRepeatButton>
-                                    <RepeatButton Visibility="Collapsed" />
-                                </Track.DecreaseRepeatButton>
-                                <Track.IncreaseRepeatButton>
-                                    <RepeatButton Visibility="Collapsed" />
-                                </Track.IncreaseRepeatButton>
-                            </Track>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>-->
-
 
         <SolidColorBrush x:Key="StandardBorderBrush" Color="#888" />
         <SolidColorBrush x:Key="StandardBackgroundBrush" Color="Black" />
@@ -433,6 +379,7 @@
                         Style="{StaticResource textWhite}"
                         Text="{Binding ElementName=Window, Path=DataContext.UserName, FallbackValue='Użytkownik'}"
                         TextWrapping="Wrap" />
+                    <!--  Text="{Binding Source={x:Static local:App.User}, Path=Name, UpdateSourceTrigger=PropertyChanged}"  -->
 
                     <TextBlock
                         Margin="20,0,0,0"
@@ -445,6 +392,7 @@
                         Style="{StaticResource textWhite}"
                         Text="{Binding ElementName=Window, Path=DataContext.UserEmail, FallbackValue='Użytkownik@email.com'}"
                         TextWrapping="Wrap" />
+                    <!--  Text="{Binding Source={x:Static local:App.User}, Path=Email, UpdateSourceTrigger=PropertyChanged}"  -->
 
                     <Border
                         Margin="5,5,20,5"
@@ -459,6 +407,7 @@
                             Background="Transparent"
                             BorderBrush="Transparent"
                             BorderThickness="0"
+                            Command="{Binding ElementName=Window, Path=DataContext.ShowUserReservationsCommand}"
                             Content="Przeglądaj moje rezerwacje"
                             FontWeight="Bold" />
                     </Border>
@@ -467,129 +416,134 @@
 
                 </DockPanel>
 
-                <ScrollViewer
-                    Grid.Row="1"
-                    MinHeight="300"
-                    Background="Black"
-                    CanContentScroll="False"
-                    HorizontalScrollBarVisibility="Disabled"
-                    PanningDeceleration="0.1"
-                    SnapsToDevicePixels="True"
-                    VerticalScrollBarVisibility="Auto">
-
-                    <ListView
-                        x:Name="list"
+                <StackPanel x:Name="spmovies" Grid.Row="1">
+                    <ScrollViewer
                         MinHeight="300"
-                        MaxHeight="{Binding ElementName=content, Path=ActualHeight}"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        ItemsSource="{Binding AvailablePlayings}"
-                        SelectedItem="{Binding SelectedPlaying}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Width="{Binding ElementName=moviesCol, Path=ActualWidth}" HorizontalAlignment="Left">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto" MinWidth="20" />
-                                        <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="3*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
+                        Background="Black"
+                        CanContentScroll="False"
+                        HorizontalScrollBarVisibility="Disabled"
+                        PanningDeceleration="0.1"
+                        SnapsToDevicePixels="True"
+                        VerticalScrollBarVisibility="Auto">
 
-                                    <Image
-                                        Grid.Column="1"
-                                        Width="96"
-                                        Height="146"
-                                        Margin="10,0"
-                                        Source="{Binding Movie.Image, Converter={StaticResource StringToBitmapConverter}}" />
+                        <ListView
+                            x:Name="list"
+                            MinHeight="300"
+                            MaxHeight="{Binding ElementName=content, Path=ActualHeight}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ItemsSource="{Binding AvailablePlayings}"
+                            SelectedItem="{Binding SelectedPlaying}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Width="{Binding ElementName=spmovies, Path=ActualWidth}" HorizontalAlignment="Left">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" MinWidth="20" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="6*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
 
-                                    <DockPanel
-                                        x:Name="TitleAndDesc"
-                                        Grid.Column="2"
-                                        Height="160"
-                                        HorizontalAlignment="Left">
-                                        <Grid Height="{Binding ElementName=TitleAndDesc, Path=ActualHeight}" HorizontalAlignment="Left">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="*" />
-                                                <RowDefinition Height="auto" />
-                                                <RowDefinition Height="*" />
-                                            </Grid.RowDefinitions>
+                                        <Border
+                                            Grid.Column="1"
+                                            Padding="5"
+                                            BorderBrush="Cyan"
+                                            BorderThickness="0,0,1,0">
+                                            <Image
+                                                Width="96"
+                                                Height="146"
+                                                Margin="10,0"
+                                                Source="{Binding Movie.Image, Converter={StaticResource StringToBitmapConverter}}" />
+                                        </Border>
+                                        <DockPanel
+                                            x:Name="TitleAndDesc"
+                                            Grid.Column="2"
+                                            Height="160"
+                                            HorizontalAlignment="Left">
+                                            <Grid Height="{Binding ElementName=TitleAndDesc, Path=ActualHeight}" HorizontalAlignment="Left">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="auto" />
+                                                    <RowDefinition Height="*" />
+                                                </Grid.RowDefinitions>
 
-                                            <StackPanel
-                                                Grid.Row="0"
-                                                Margin="0,20,0,20"
-                                                VerticalAlignment="Top"
-                                                Orientation="Horizontal">
-                                                <TextBlock
+                                                <StackPanel
                                                     Grid.Row="0"
-                                                    Margin="10,0"
-                                                    HorizontalAlignment="Left"
-                                                    VerticalAlignment="Bottom"
-                                                    FontFamily="Verdana"
-                                                    FontSize="33"
-                                                    FontWeight="DemiBold"
-                                                    Style="{StaticResource textWhite}"
-                                                    Text="{Binding Movie.Name}" />
+                                                    Margin="0,20,0,20"
+                                                    VerticalAlignment="Top"
+                                                    Orientation="Horizontal">
+                                                    <TextBlock
+                                                        Grid.Row="0"
+                                                        Margin="10,0"
+                                                        HorizontalAlignment="Left"
+                                                        VerticalAlignment="Bottom"
+                                                        FontFamily="Verdana"
+                                                        FontSize="33"
+                                                        FontWeight="DemiBold"
+                                                        Style="{StaticResource textWhite}"
+                                                        Text="{Binding Movie.Name}" />
+
+                                                    <TextBlock
+                                                        Grid.Row="0"
+                                                        Margin="10,0"
+                                                        HorizontalAlignment="Left"
+                                                        VerticalAlignment="Center"
+                                                        FontFamily="Verdana"
+                                                        FontSize="13"
+                                                        FontWeight="Normal"
+                                                        Style="{StaticResource textWhite}"
+                                                        Text="{Binding Date}" />
+
+                                                </StackPanel>
 
                                                 <TextBlock
-                                                    Grid.Row="0"
-                                                    Margin="10,0"
-                                                    HorizontalAlignment="Left"
-                                                    VerticalAlignment="Center"
-                                                    FontFamily="Verdana"
-                                                    FontSize="13"
-                                                    FontWeight="Normal"
+                                                    Grid.Row="1"
+                                                    Padding="20,0"
+                                                    FontFamily="Calibri"
+                                                    FontWeight="Heavy"
                                                     Style="{StaticResource textWhite}"
-                                                    Text="{Binding Date}" />
+                                                    Text="Opis:" />
 
-                                            </StackPanel>
+                                                <TextBlock
+                                                    Grid.Row="2"
+                                                    Padding="20,0"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Top"
+                                                    FontFamily="Calibri"
+                                                    FontSize="14"
+                                                    FontWeight="Light"
+                                                    Style="{StaticResource textWhite}"
+                                                    Text="{Binding Movie.DescriptionShort}"
+                                                    TextWrapping="Wrap" />
 
-                                            <TextBlock
-                                                Grid.Row="1"
-                                                Padding="20,0"
-                                                FontFamily="Calibri"
-                                                FontWeight="Heavy"
-                                                Style="{StaticResource textWhite}"
-                                                Text="Opis:" />
+                                            </Grid>
 
-                                            <TextBlock
-                                                Grid.Row="2"
-                                                Padding="20,0"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Top"
-                                                FontFamily="Calibri"
-                                                FontSize="14"
-                                                FontWeight="Light"
-                                                Style="{StaticResource textWhite}"
-                                                Text="{Binding Movie.DescriptionShort}"
-                                                TextWrapping="Wrap" />
+                                        </DockPanel>
 
-                                        </Grid>
+                                        <WrapPanel Grid.Column="3" VerticalAlignment="Center">
 
-                                    </DockPanel>
+                                            <Button
+                                                x:Name="CheckMovieBtn"
+                                                Command="{Binding ElementName=Window, Path=DataContext.ShowPlayingCommand}"
+                                                CommandParameter="{Binding}"
+                                                Content="Podgląd"
+                                                Style="{StaticResource CheckMovieBtnStyle}" />
 
-                                    <WrapPanel Grid.Column="3" VerticalAlignment="Center">
-
-                                        <Button
-                                            x:Name="CheckMovieBtn"
-                                            Command="{Binding ElementName=Window, Path=DataContext.ShowPlayingCommand}"
-                                            CommandParameter="{Binding}"
-                                            Content="Podgląd"
-                                            Style="{StaticResource CheckMovieBtnStyle}" />
-
-                                    </WrapPanel>
+                                        </WrapPanel>
 
 
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Left" />
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                    </ListView>
-                </ScrollViewer>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListView>
+                    </ScrollViewer>
 
+                </StackPanel>
             </Grid>
 
         </StackPanel>
