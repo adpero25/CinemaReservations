@@ -32,11 +32,17 @@ namespace Cinema_Reservations.WS
 		[OperationContract]
 		public int CanMakeReservation(int playingId, string seats);
 		[OperationContract]
+		public int CanEditReservation(int reservationId, int playingId, string seats);
+		[OperationContract]
 		public Playing GetPlayingDetails(int playingId);
 		[OperationContract]
 		public List<Reservation> GetAllUserReservation(int userId);
 		[OperationContract]
 		public List<Reservation> GetUserReservation(int userId, int playingId);
+		[OperationContract]
+		public Reservation GetReservation(int userId, int reservationId);
+		[OperationContract]
+		public void EditReservation(int userId, int playingId, int reservationId, string seats);
 	}
 
 	public class CinemaService : ICinemaService
@@ -73,7 +79,6 @@ namespace Cinema_Reservations.WS
 			if (playing.CanMakeReservation(reservedSeats) != "0")
 				throw new MakeReservationException("Wybrane miejsca są już zajęte");
 
-
 			var seatCount = reservedSeats.Split(",").Count();
 
 			var reservation = new Reservation()
@@ -99,11 +104,12 @@ namespace Cinema_Reservations.WS
 			var reservation = context.Reservations.Where(r => r.Id == reservationId).FirstOrDefault();
 
 			if (reservation == null)
-				throw new NoSuchReservationException($"Rezewacja o od: '{reservationId}' nie istnieje!");
+				throw new NoSuchReservationException($"Rezewacja o id: '{reservationId}' nie istnieje!");
 
 			context.Remove(reservation);
 			context.SaveChanges();
 		}
+
 
 		/// <summary>
 		///		Pobiera seans o podanym id
@@ -126,6 +132,7 @@ namespace Cinema_Reservations.WS
 			return sb.ToString();
 		}
 
+
 		/// <summary>
 		///		Pobiera listę repertuarów
 		/// </summary>
@@ -144,6 +151,7 @@ namespace Cinema_Reservations.WS
 
 			return playings;
 		}
+
 
 		/// <summary>
 		///		Pobiera obraz dla filmu o podanym id
@@ -199,6 +207,51 @@ namespace Cinema_Reservations.WS
 			}
 
 			var result = playing.CanMakeReservation(seats);
+
+			if (result == "0")
+			{
+				return 0;
+			}
+			else
+			{
+				return int.Parse(result.Split(",")[0]);
+			}
+		}
+
+
+		/// <summary>
+		///		Sprawdza czy można dokonać podanej rezerwacji dla danego seansu
+		/// </summary>
+		/// <param name="reservationId"></param>
+		/// <param name="playingId"></param>
+		/// <param name="seats"></param>
+		/// <returns>
+		///		-1 - błąd
+		///		0 - można dokonać rezerwacji
+		///		int > 0 - numer miejsca którego nie mazna zarezerwować
+		/// </returns>
+		public int CanEditReservation(int reservationId, int playingId, string seats)
+		{
+			var playing = context.Playings
+				.Include(m => m.Movie)
+				.Include(h => h.Hall)
+				.Include(r => r.Reservations)
+				.FirstOrDefault(p => p.Id == playingId);
+
+			if (playing == null)
+				return -1;
+
+			var seatsSplitted = seats.Split(',');
+
+			foreach (var item in seatsSplitted)
+			{
+				var seatNum = int.Parse(item);
+
+				if (seatNum < 0 || seatNum > playing.Hall.Type.GetHashCode())
+					return seatNum;
+			}
+
+			var result = playing.CanMakeReservation(reservationId, seats);
 
 			if (result == "0")
 			{
@@ -287,6 +340,96 @@ namespace Cinema_Reservations.WS
 			}
 
 			return reservations;
+		}
+
+
+		/// <summary>
+		///		Zwraca konkretną rezerwację
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <param name="reservationId"></param>
+		/// <returns></returns>
+		/// <exception cref="InvalidOperationException"></exception>
+		public Reservation GetReservation(int userId, int reservationId)
+		{
+			try
+			{
+				var reservation = context.Reservations
+					.Include(p => p.Playing).ThenInclude(m => m.Movie)
+					.Include(h => h.Playing).ThenInclude(h => h.Hall)
+					.Include(h => h.Playing).AsNoTracking()
+					.Where(r => r.UserId == userId && r.Id == reservationId)
+					.FirstOrDefault();
+
+				reservation.Playing.Reservations = null;
+
+				return reservation;
+			}
+			catch
+			{
+                Console.WriteLine($"Błąd podczas pobierania rezerwacji: {reservationId}");
+				throw new InvalidOperationException("Brak danych");
+            }
+		}
+
+
+		/// <summary>
+		///		Edycja rezerwacji biletu
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <param name="playingId"></param>
+		/// <param name="reservationId"></param>
+		/// <param name="seats"></param>
+		/// <exception cref="MakeReservationException"></exception>
+		/// <exception cref="InvalidDataException"></exception>
+		/// <exception cref="InvalidOperationException"></exception>
+		public void EditReservation(int userId, int playingId, int reservationId, string seats)
+		{
+			User user = null;
+			Playing playing = null;
+
+			try
+			{
+				user = context.Users.First(u => u.Id == userId);
+				playing = context.Playings.First(p => p.Id == playingId);
+			}
+			catch { throw new MakeReservationException(); }
+
+			if (string.IsNullOrEmpty(seats) || Regex.IsMatch(seats, "[a-zA-Z]+"))
+				throw new MakeReservationException();
+
+			if (playing.CanMakeReservation(reservationId, seats) != "0")
+				throw new MakeReservationException("Wybrane miejsca są już zajęte");
+
+
+			try
+			{
+				var reservation = context.Reservations
+					.Where(r => r.UserId == userId && r.Id == reservationId && r.PlayingId == playingId)
+					.FirstOrDefault();
+
+				if (reservation == null)
+				{
+					throw new InvalidDataException("W systemie nie ma takiej rezerwacji!");
+				}
+
+				var seatCount = seats.Split(',').Length;
+				
+				reservation.Date = DateTime.Now;
+				reservation.Seats = seats;
+				reservation.SeatCount = seatCount;
+				reservation.ReservationCost = seatCount * reservation.Playing!.TicketCost;
+
+				context.Update(reservation);
+				context.SaveChanges();
+
+				return;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Błąd podczas pobierania rezerwacji: {reservationId}");
+				throw new InvalidOperationException($"Błąd podczas pobierania rezerwacji: {reservationId}, {ex.Message}");
+			}
 		}
 	}
 }

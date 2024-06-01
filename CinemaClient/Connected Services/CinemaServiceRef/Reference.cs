@@ -40,6 +40,10 @@ namespace CinemaServiceRef
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         System.Threading.Tasks.Task<int> CanMakeReservationAsync(int playingId, string seats);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICinemaService/CanEditReservation", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        System.Threading.Tasks.Task<int> CanEditReservationAsync(int reservationId, int playingId, string seats);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICinemaService/GetPlayingDetails", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         System.Threading.Tasks.Task<CinemaServiceRef.Playing> GetPlayingDetailsAsync(int playingId);
@@ -51,6 +55,14 @@ namespace CinemaServiceRef
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICinemaService/GetUserReservation", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         System.Threading.Tasks.Task<CinemaServiceRef.GetUserReservationResponse> GetUserReservationAsync(CinemaServiceRef.GetUserReservationRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICinemaService/GetReservation", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        System.Threading.Tasks.Task<CinemaServiceRef.Reservation> GetReservationAsync(int userId, int reservationId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICinemaService/EditReservation", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        System.Threading.Tasks.Task EditReservationAsync(int userId, int playingId, int reservationId, string seats);
     }
     
     /// <remarks/>
@@ -1083,6 +1095,11 @@ namespace CinemaServiceRef
             return base.Channel.CanMakeReservationAsync(playingId, seats);
         }
         
+        public System.Threading.Tasks.Task<int> CanEditReservationAsync(int reservationId, int playingId, string seats)
+        {
+            return base.Channel.CanEditReservationAsync(reservationId, playingId, seats);
+        }
+        
         public System.Threading.Tasks.Task<CinemaServiceRef.Playing> GetPlayingDetailsAsync(int playingId)
         {
             return base.Channel.GetPlayingDetailsAsync(playingId);
@@ -1113,6 +1130,16 @@ namespace CinemaServiceRef
             inValue.userId = userId;
             inValue.playingId = playingId;
             return ((CinemaServiceRef.ICinemaService)(this)).GetUserReservationAsync(inValue);
+        }
+        
+        public System.Threading.Tasks.Task<CinemaServiceRef.Reservation> GetReservationAsync(int userId, int reservationId)
+        {
+            return base.Channel.GetReservationAsync(userId, reservationId);
+        }
+        
+        public System.Threading.Tasks.Task EditReservationAsync(int userId, int playingId, int reservationId, string seats)
+        {
+            return base.Channel.EditReservationAsync(userId, playingId, reservationId, seats);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()

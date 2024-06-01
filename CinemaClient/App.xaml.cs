@@ -47,6 +47,20 @@ namespace CinemaClient
 		{
 			User = user;
 		}
+
+		public static Window? GetActiveWindow()
+		{
+			try
+			{
+				return Current.Windows.OfType<Window>().ToList()[Current.Windows.Count - 2];
+			} 
+			catch (Exception ex) 
+			{
+				return Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive);
+			}
+
+		}
+
 	}
 
 }

@@ -86,6 +86,24 @@ namespace Cinema_Reservations.Models
 			
 			return "0";	
 		}
+
+		public string CanMakeReservation(int reservationId, string seats)
+		{
+			string[] seatsSeparated = seats.Split(",");
+
+			if (Reservations == null || Reservations.Count == 0)
+				return "0";
+
+			foreach (var item in Reservations)
+			{
+				var itemSeats = item.Seats.Split(",");
+
+				if (itemSeats.Intersect(seatsSeparated).Any() && item.Id != reservationId)
+					return string.Join(",", itemSeats.Intersect(seatsSeparated));
+			}
+
+			return "0";
+		}
 	}
 
 	public enum PlayingState

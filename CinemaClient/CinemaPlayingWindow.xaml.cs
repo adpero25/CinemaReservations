@@ -2,7 +2,9 @@
 using CinemaClient.ViewModel;
 using CinemaServiceRef;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,6 +30,11 @@ namespace CinemaClient
 	{
 		public Playing Playing;
 		private bool windowInitialized;
+
+		// do edycji z panelu listy rezerwacji
+		public bool IsEditOperationEnable { get; private set; }
+		public int EditedReservationId { get; private set; }
+
 		private string[] reservedPlaces;
 		private List<string> UserReservations;
 		private CinemaPlayingViewModel viewModel;
@@ -39,15 +46,47 @@ namespace CinemaClient
 			Playing = _playing;
 			DataContext = viewModel;
 			windowInitialized = false;
+			IsEditOperationEnable = false;
+			EditedReservationId = -1;
+
+			InitializeComponent();
+		}
+
+		public  CinemaPlayingWindow(Playing _playing, CinemaPlayingViewModel _playingViewModel, bool isEditOperation = false, int reservationId = 0)
+		{
+			viewModel = _playingViewModel;
+			viewModel.StateChanged += ReservationStateChanged;
+			Playing = _playing;
+			DataContext = viewModel;
+			windowInitialized = false;
+			IsEditOperationEnable = isEditOperation;
+			EditedReservationId = reservationId;
 
 			InitializeComponent();
 		}
 
 		private async void Window_Initialized(object sender, EventArgs e)
 		{
-			if (!(await DownoladDetailsAsync()))
+			if (windowInitialized)
 				return;
 
+			if (!(await DownoladDetailsAsync()))
+				return;
+			
+			DrawCinema();
+
+			await InitCinemaDisplayAsync();
+
+			windowInitialized = true;
+
+			if (IsEditOperationEnable)
+			{
+				EditReservation(EditedReservationId);
+			}
+		}
+
+		private void DrawCinema()
+		{
 			var hall = Playing.Hall;
 
 			for (int i = 0; i < hall.Rows; i++)
@@ -69,11 +108,11 @@ namespace CinemaClient
 				PlacesRow.ColumnDefinitions.Add(col);
 			}
 
-			var centerCol = new ColumnDefinition()
-			{
-				Width = new GridLength(3, GridUnitType.Star)
-			};
-			PlacesRow.ColumnDefinitions.Add(centerCol);
+			//var centerCol = new ColumnDefinition()
+			//{
+			//	Width = new GridLength(3, GridUnitType.Star)
+			//};
+			//PlacesRow.ColumnDefinitions.Add(centerCol);
 
 			for (int j = 0; j < hall.Columns / 2; j++)
 			{
@@ -83,28 +122,35 @@ namespace CinemaClient
 				};
 				PlacesRow.ColumnDefinitions.Add(col);
 			}
-
-			await InitCinemaDisplayAsync();
-
-			windowInitialized = true;
 		}
 
 		private async void ReservationStateChanged(object? sender, EventArgs e)
 		{
-			var children = PlacesRow.Children;
-
-			foreach (var child in children)
+			if (viewModel.CurrentState == State.Edit)
 			{
-				if (child != null && child is Rectangle)
+
+			}
+			else if (viewModel.CurrentState == State.Reserve)
+			{
+
+			}
+			else //(viewModel.CurrentState == State.None)
+			{
+				var children = PlacesRow.Children;
+
+				foreach (var child in children)
 				{
-					if ((child as Rectangle)!.Fill.ToString() == new SolidColorBrush(Colors.Gray).ToString())
+					if (child != null && child is Rectangle)
 					{
-						(child as Rectangle)!.Fill = new SolidColorBrush(Colors.Green);
+						if ((child as Rectangle)!.Fill.ToString() == Colors.Gray.ToString())
+						{
+							(child as Rectangle)!.Fill = new SolidColorBrush(Colors.Green);
+						}
 					}
 				}
-			}
 
-			await InitCinemaDisplayAsync();
+				await InitCinemaDisplayAsync();
+			}
 		}
 
 		private async Task<bool> DownloadUserReservationsAsync()
@@ -115,9 +161,9 @@ namespace CinemaClient
 
 				UserReservations = new List<string>();
 
-				viewModel.userReservations.ForEach(s => 
-				{ 
-					UserReservations.AddRange(s.Seats.Split(',').Select(p => p.Trim()).ToArray()); 
+				viewModel.UserReservations.ToList().ForEach(s =>
+				{
+					UserReservations.AddRange(s.Seats.Split(',').Select(p => p.Trim()).ToArray());
 				});
 
 				return true;
@@ -166,11 +212,11 @@ namespace CinemaClient
 			{
 				for (int col = 0; col < PlacesRow.ColumnDefinitions.Count; col++)
 				{
-					if (col == PlacesRow.ColumnDefinitions.Count / 2)
-					{
-						colReducer++;
-						continue;
-					}
+					//if (col == PlacesRow.ColumnDefinitions.Count / 2)
+					//{
+					//	colReducer++;
+					//	continue;
+					//}
 
 					var seatNum = row * PlacesRow.ColumnDefinitions.Count + col + 1 - colReducer;
 
@@ -185,10 +231,11 @@ namespace CinemaClient
 
 					rectangle.Style = (Style)FindResource("RectangleWithTextStyle");
 					rectangle.Name = $"rec_{seatNum}";
+					rectangle.Tag = seatNum;
 					rectangle.RadiusX = 10;
-					rectangle.RadiusY = 8;
-					rectangle.Width = 32;
-					rectangle.Height = 22;
+					rectangle.RadiusY = 2;
+					rectangle.Width = 42;
+					rectangle.Height = 24;
 					rectangle.MouseLeave += UnMarkSeat;
 					rectangle.MouseLeftButtonDown += SeatClick;
 
@@ -217,13 +264,11 @@ namespace CinemaClient
 			}
 		}
 
-
-
 		private void UnMarkSeat(object sender, MouseEventArgs e)
 		{
 			var rect = sender as Rectangle;
 
-			if (rect.Fill.ToString() != new SolidColorBrush(Colors.Gray).ToString())
+			if (rect.Fill.ToString() != Colors.Gray.ToString())
 			{
 				return;
 			}
@@ -236,28 +281,142 @@ namespace CinemaClient
 		{
 			var rect = sender as Rectangle;
 
-			if (rect.Fill.ToString() == new SolidColorBrush(Colors.Red).ToString() ||
-				rect.Fill.ToString() == new SolidColorBrush(Colors.DarkCyan).ToString())
+			if (rect.Fill.ToString() == Colors.Red.ToString() ||
+				rect.Fill.ToString() == Colors.DarkCyan.ToString())
 			{
 				return;
 			}
 
 			var seatNum = rect.Name.Split("_")[1];
 
-			if (rect.Fill.ToString() == new SolidColorBrush(Colors.Gray).ToString())
-			{
-				if (viewModel.CurrentState == State.Reserve)
-					if (viewModel.userReservedPlaces.FirstOrDefault(p => p == seatNum) != null)
-						viewModel.userReservedPlaces.Remove(seatNum);
 
-				rect.Fill = new SolidColorBrush(Colors.Green);
+			if (viewModel.CurrentState == State.None)
+			{
+				if (rect.Fill.ToString() == Colors.Gray.ToString())
+				{
+					rect.Fill = new SolidColorBrush(Colors.Green);
+				}
+				else
+				{
+					rect.Fill = new SolidColorBrush(Colors.Gray);
+				}
 			}
-			else
+			else if (viewModel.CurrentState == State.Reserve || viewModel.CurrentState == State.Edit)
 			{
-				if (viewModel.CurrentState == State.Reserve)
+				if (rect.Fill.ToString() == Colors.Gray.ToString() ||
+					rect.Fill.ToString() == Colors.Blue.ToString())
+				{
+					viewModel.userReservedPlaces.Remove(seatNum);
+					rect.Fill = new SolidColorBrush(Colors.Green);
+				}
+				else
+				{
 					viewModel.userReservedPlaces.Add(seatNum);
+					rect.Fill = new SolidColorBrush(Colors.Gray);
+				}
+			}
+		}
 
-				rect.Fill = new SolidColorBrush(Colors.Gray);
+		private void list_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			MainSW.ScrollToVerticalOffset(MainSW.ContentVerticalOffset - e.Delta / 2);
+		}
+
+		private void EditButton_Click(object sender, RoutedEventArgs e)
+		{
+			var reservationId = (sender as Button).Tag;
+
+			EditReservation((int)reservationId);
+		}
+
+		internal async void EditReservation(int reservationId)
+		{
+			Reservation? reservation;
+
+			try
+			{
+				reservation = (await viewModel.GetReservation(reservationId)) as Reservation;
+
+				if (reservation == null)
+				{
+					throw new InvalidOperationException("Brak danych dot. rezerwacji");
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("Brak zawartości do wyświetlenia", "Uwaga", MessageBoxButton.OK, MessageBoxImage.Error);
+				return;
+			}
+
+			var seats = reservation.Seats.Split(",").Select(s => s.Trim()).ToArray();
+
+			foreach (var item in PlacesRow.Children)
+			{
+				if (item is Rectangle)
+				{
+					var rec = (item as Rectangle);
+
+					if (rec.Fill.ToString() != Colors.Green.ToString())
+					{
+						rec.Fill = new SolidColorBrush(Colors.Red);
+					}
+
+					if (seats.Intersect(new string[] { rec.Tag.ToString() }).Any())
+					{
+						rec.Fill = new SolidColorBrush(Colors.Blue);
+					}
+				}
+			}
+
+			viewModel.CurrentState = State.Edit;
+			viewModel.Reservation = reservation;
+			viewModel.userReservedPlaces = new ObservableCollection<string>(seats);
+		}
+
+		private void reservePlaces_Click(object sender, RoutedEventArgs e)
+		{
+			MainSW.ScrollToBottom();
+		}
+
+
+		/// <summary>
+		///		Podświetla siedzenia danej rezerwacji po kliknięciu na element listy
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void list_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			// przywróć kolory domyslne
+			foreach (var item in PlacesRow.Children)
+			{
+				if (item is Rectangle)
+				{
+					var rec = (item as Rectangle);
+
+					if (rec.Fill.ToString() == Colors.Blue.ToString())
+					{
+						rec.Fill = new SolidColorBrush(Colors.DarkCyan);
+					}
+				}
+			}
+
+			var reservation = list.SelectedItem as Reservation;
+
+			if (reservation == null) { return; }
+
+			var seats = reservation.Seats.Split(",").Select(s => s.Trim()).ToList();
+
+			foreach (var item in PlacesRow.Children)
+			{
+				if (item is Rectangle)
+				{
+					var rec = (item as Rectangle);
+
+					if (seats.Intersect(new string[] { rec.Tag.ToString() }).Any())
+					{
+						rec.Fill = new SolidColorBrush(Colors.Blue);
+					}
+				}
 			}
 		}
 	}

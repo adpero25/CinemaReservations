@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -108,9 +109,21 @@ namespace CinemaClient.ViewModel
 
 		private void ShowUserReservations(object obj)
 		{
-			UserReservationsWindow playing_details = new UserReservationsWindow();
+			Window window = App.GetActiveWindow();
 
-			playing_details.ShowDialog();
+			UserReservationsWindow reservations = new UserReservationsWindow();
+			
+			//if (window != null)
+			//{
+			//	window.Visibility = Visibility.Hidden;
+			//}
+
+			reservations.ShowDialog();
+
+			//if (window != null)
+			//{
+			//	window.Visibility = Visibility.Visible;
+			//}
 		}
 
 		private void ShowPlaying(object obj)
@@ -118,9 +131,21 @@ namespace CinemaClient.ViewModel
 			var playing = obj as Playing;
 			if (playing != null)
 			{
+				Window window = App.GetActiveWindow();
+
 				CinemaPlayingWindow playing_details = new CinemaPlayingWindow(playing, new CinemaPlayingViewModel(playing));
 
+				//if (window != null)
+				//{
+				//	window.Visibility = Visibility.Hidden;
+				//}
+
 				playing_details.ShowDialog();
+
+				//if (window != null)
+				//{
+				//	window.Visibility = Visibility.Visible;
+				//}
 			}
 		}
 
@@ -137,24 +162,6 @@ namespace CinemaClient.ViewModel
 			}
 
 			OnPropertyChange(nameof(AvailablePlayings));
-		}
-
-		private BitmapImage ConvertToBitmap(string img)
-		{
-			// Convert the image data to a byte array
-			byte[] imageBytes = Convert.FromBase64String(img);
-
-			// Convert the byte array to a BitmapImage and display it
-			BitmapImage bitmapImage = new BitmapImage();
-			using (MemoryStream stream = new MemoryStream(imageBytes))
-			{
-				bitmapImage.BeginInit();
-				bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-				bitmapImage.StreamSource = stream;
-				bitmapImage.EndInit();
-			}
-
-			return bitmapImage;
 		}
 
 		public async void GetUserDetailsAsync()

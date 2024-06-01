@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\screen.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="itext.bouncy-castle-fips-adapter" Version="8.0.4" />
     <PackageReference Include="itext7" Version="8.0.4" />
     <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.4" />
@@ -27,6 +31,10 @@
     <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="6.0.*" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="6.0.*" />
     <PackageReference Include="System.ServiceModel.Security" Version="6.0.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\screen.png" />
   </ItemGroup>
 
   <ItemGroup>

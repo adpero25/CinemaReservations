@@ -76,7 +76,7 @@ namespace CinemaClient
 				return;
 			}
 
-			mainWindow.Visibility = Visibility.Hidden;
+			mainWindow.Visibility = Visibility.Collapsed;
 
 			CinemaWindow cinemaWindow = new CinemaWindow();
 			cinemaWindow.ShowDialog();
