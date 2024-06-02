@@ -1,6 +1,8 @@
 ﻿using CinemaClient.Model;
 using System.Configuration;
 using System.Data;
+using System.Net.Http.Headers;
+using System.Net.Http;
 using System.Windows;
 using UserServiceRef;
 
@@ -12,9 +14,9 @@ namespace CinemaClient
 	public partial class App : Application
 	{
 		private static int userID;
-		public static int UserID 
-		{ 
-			get { return userID; } 
+		public static int UserID
+		{
+			get { return userID; }
 			private set
 			{
 				userID = value;
@@ -22,9 +24,9 @@ namespace CinemaClient
 			}
 		}
 		private static User user;
-		public static User User 
-		{ 
-			get { return user; } 
+		public static User User
+		{
+			get { return user; }
 			private set
 			{
 				user = value;
@@ -53,8 +55,8 @@ namespace CinemaClient
 			try
 			{
 				return Current.Windows.OfType<Window>().ToList()[Current.Windows.Count - 2];
-			} 
-			catch (Exception ex) 
+			}
+			catch (Exception ex)
 			{
 				return Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive);
 			}

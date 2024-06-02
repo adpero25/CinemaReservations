@@ -474,6 +474,7 @@ namespace UserServiceRef
                 result.ReaderQuotas = System.Xml.XmlDictionaryReaderQuotas.Max;
                 result.MaxReceivedMessageSize = int.MaxValue;
                 result.AllowCookies = true;
+                result.Security.Mode = System.ServiceModel.BasicHttpSecurityMode.Transport;
                 return result;
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
@@ -483,7 +484,7 @@ namespace UserServiceRef
         {
             if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_IUserService_soap))
             {
-                return new System.ServiceModel.EndpointAddress("http://localhost:14594/UserService");
+                return new System.ServiceModel.EndpointAddress("https://localhost:44389/UserService");
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }

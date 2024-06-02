@@ -4,6 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Data.Entity;
 using SoapCore;
 using System.ServiceModel.Channels;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Net;
 
 namespace Cinema_Reservations
 {
@@ -16,7 +21,6 @@ namespace Cinema_Reservations
 			builder.Services.AddDbContext<CinemaContext>(options =>
 				options.UseSqlServer(builder.Configuration.GetConnectionString("CinemaCS")).EnableSensitiveDataLogging());
 
-
 			// Add services to the container.
 			builder.Services.AddControllersWithViews();
 			builder.Services.AddScoped<SeederContext>();
@@ -25,6 +29,21 @@ namespace Cinema_Reservations
 			builder.Services.AddSoapCore();
 
 			var app = builder.Build();
+
+			Host.CreateDefaultBuilder()
+				.ConfigureWebHostDefaults(webBuilder =>
+				{
+					webBuilder.ConfigureKestrel(serverOptions =>
+					{
+						serverOptions.Listen(IPAddress.Any, 5000); // HTTP
+						serverOptions.Listen(IPAddress.Any, 5001, listenOptions =>
+						{
+							listenOptions.UseHttps($"{Path.Combine(Environment.CurrentDirectory, Path.Combine("cert", "aspnetcore.pfx"))}", "pass");
+						});
+					});
+				});
+
+
 
 			using (var scope = app.Services.CreateScope())
 			{
@@ -64,5 +83,8 @@ namespace Cinema_Reservations
 
 			app.Run();
 		}
+
+		
 	}
+
 }
